@@ -3,7 +3,7 @@ package estagioCEPEIN.FixacaoSpring.Controllers;
 import estagioCEPEIN.FixacaoSpring.Models.dto.ProfessorConsultaDTO;
 import estagioCEPEIN.FixacaoSpring.Models.dto.ProfessorDTO;
 import estagioCEPEIN.FixacaoSpring.Models.enumered.TipoCargoEnum;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Professor;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Professores;
 import estagioCEPEIN.FixacaoSpring.Models.repositorio.ProfessorRepository;
 import estagioCEPEIN.FixacaoSpring.Models.servise.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class ProfessorController {
     private ProfessorRepository professorRepository;
 
     @PostMapping
-    public ResponseEntity<Professor> novoProfessor (@RequestBody ProfessorDTO professor) {
+    public ResponseEntity<Professores> novoProfessor (@RequestBody ProfessorDTO professor) {
         return ResponseEntity.status(HttpStatus.CREATED).body(professorService.save(professor));
     }
 
@@ -33,7 +33,7 @@ public class ProfessorController {
     }
 
     @PutMapping
-    public ResponseEntity<Professor> AlterarProfessor (@PathVariable Long id, @RequestBody ProfessorDTO professornovo) {
+    public ResponseEntity<Professores> AlterarProfessor (@PathVariable Long id, @RequestBody ProfessorDTO professornovo) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(professorService.update(id, professornovo));
     }
 
@@ -43,13 +43,13 @@ public class ProfessorController {
 
     ///JPA QUERY
     @GetMapping(path = "/procurar/{cargo}")
-    public Iterable<Professor> procuraProfessor(@PathVariable TipoCargoEnum cargo) {return professorRepository.findByCargo(cargo);}
+    public Iterable<Professores> procuraProfessor(@PathVariable TipoCargoEnum cargo) {return professorRepository.findByCargo(cargo);}
 
     @GetMapping(path = "/procurar/primeiro")
-    public Iterable<Professor> procuraPrimeiro() {return professorRepository.findFirstBy();}
+    public Iterable<Professores> procuraPrimeiro() {return professorRepository.findFirstBy();}
 
     @GetMapping(path = "/procurar/{nome}/{cargo}")
-    public Iterable<Professor> procuraPorNomeECargo (@PathVariable String nome, @PathVariable TipoCargoEnum cargo) {
+    public Iterable<Professores> procuraPorNomeECargo (@PathVariable String nome, @PathVariable TipoCargoEnum cargo) {
         return professorRepository.findByNomeContainingIgnoreCaseAndCargo(nome,cargo);
     }
 }

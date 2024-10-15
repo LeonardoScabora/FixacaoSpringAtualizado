@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "Professor")
-public class Professor {
+public class Professores {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -47,9 +47,9 @@ public class Professor {
     @OneToMany(mappedBy = "professorId")
     private List<Disciplinas> disciplinasList = new ArrayList<>();
 
-    public Professor() {}
+    public Professores() {}
 
-    public Professor(ProfessorDTO professorDTO) {
+    public Professores(ProfessorDTO professorDTO) {
         this.nome = professorDTO.nome();
         this.dataNascimento = professorDTO.dataNascimento();
         this.salario = professorDTO.salario();

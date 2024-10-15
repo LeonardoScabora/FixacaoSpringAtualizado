@@ -1,5 +1,5 @@
 CREATE TABLE Professor (
-                           ID_prof LONG auto_increment PRIMARY KEY ,
+                           ID_prof LONG auto_increment PRIMARY KEY not null,
                            NOME_prof Varchar(60),
                            DataNASC_prof DATE,
                            SALARIO Decimal (10, 2),
@@ -8,39 +8,39 @@ CREATE TABLE Professor (
 
 
 CREATE TABLE Turma (
-                       ID_turma LONG auto_increment PRIMARY KEY ,
+                       ID_turma LONG auto_increment PRIMARY KEY not null,
                        SERIE_turma varchar(10),
                        PROF_id LONG,
 
                        CONSTRAINT FK_Professor FOREIGN KEY (PROF_id) REFERENCES Professor(ID_prof));
 
 CREATE TABLE Endereco (
-                         ID_endereco LONG auto_increment PRIMARY KEY,
-                         RUA varchar(150));
+                         ID_endereco LONG auto_increment PRIMARY KEY not null,
+                         BAIRRO varchar(150),
+                         DATAREGISTRO TIMESTAMP);
 
 CREATE TABLE Aluno (
 
-                       ID_aluno LONG PRIMARY KEY,
+                       ID_aluno LONG auto_increment PRIMARY KEY not null ,
                        NOME_aluno varchar(60),
                        DATANASCIMENTO DATE,
                        DATAREGISTRO TIMESTAMP,
                        TURMA_id LONG,
-                       Endereco_id LONG,
+                       Endereco_id LONG UNIQUE,
 
-                       CONSTRAINT FK_Endereco FOREIGN KEY (ID_aluno) REFERENCES Endereco(ID_endereco),
+                       CONSTRAINT FK_Endereco FOREIGN KEY (Endereco_id) REFERENCES Endereco(ID_endereco),
                        CONSTRAINT FK_Turma FOREIGN KEY (TURMA_id) REFERENCES Turma(ID_turma));
 
--- CREATE TABLE Aluno_Turma (
---                              aluno_id integer,
---                              turma_id integer,
---                              Presensa ENUM('FALTA','PRESENCA'),
---
---                              PRIMARY KEY (aluno_id, turma_id),
---                              FOREIGN KEY (aluno_id) REFERENCES Aluno(ID_aluno),
---                              FOREIGN KEY (turma_id) REFERENCES Turma(ID_turma));
+CREATE TABLE Aluno_Turma (
+                             aluno_id integer not null ,
+                             turma_id integer not null ,
+
+                             PRIMARY KEY (aluno_id, turma_id),
+                             FOREIGN KEY (aluno_id) REFERENCES Aluno(ID_aluno),
+                             FOREIGN KEY (turma_id) REFERENCES Turma(ID_turma));
 
 CREATE TABLE Disciplina (
-                      ID_disciplina LONG auto_increment PRIMARY KEY,
+                      ID_disciplina LONG auto_increment PRIMARY KEY not null,
                       Nome_disciplina varchar(160),
                       turma_id LONG,
 

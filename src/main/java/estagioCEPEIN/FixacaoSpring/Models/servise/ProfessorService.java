@@ -5,7 +5,7 @@ import estagioCEPEIN.FixacaoSpring.Models.dto.ProfessorConsultaDTO;
 import estagioCEPEIN.FixacaoSpring.Models.dto.ProfessorDTO;
 import estagioCEPEIN.FixacaoSpring.Models.dto.TurmasConsultaDTO;
 import estagioCEPEIN.FixacaoSpring.Models.entidades.Disciplinas;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Professor;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Professores;
 import estagioCEPEIN.FixacaoSpring.Models.entidades.Turmas;
 import estagioCEPEIN.FixacaoSpring.Models.repositorio.ProfessorRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,7 +22,7 @@ public class ProfessorService {
     @Autowired
     ProfessorRepository professorRepository;
 
-    public Professor getById(Long id) {
+    public Professores getById(Long id) {
         return professorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ID não Encontrado"));
     }
 
@@ -34,20 +34,20 @@ public class ProfessorService {
 
     ///POST
     @Transactional
-    public Professor save(ProfessorDTO professor) {
-        return professorRepository.save(new Professor (professor));}
+    public Professores save(ProfessorDTO professor) {
+        return professorRepository.save(new Professores(professor));}
 
     ///PUT
     @Transactional
-    public Professor update(Long id, ProfessorDTO professor) {
-        Professor professorFound = getById(id);
+    public Professores update(Long id, ProfessorDTO professor) {
+        Professores professoresFound = getById(id);
 
-        professorFound.setNome(professor.nome() != null ? professor.nome() : professorFound.getNome());
-        professorFound.setDataNascimento(professor.dataNascimento() != null ? professor.dataNascimento() : professorFound.getDataNascimento());
-        professorFound.setSalario(professor.salario() != null ? professor.salario() : professorFound.getSalario());
-        professorFound.setCargo(professor.cargo() != null ? professor.cargo() : professorFound.getCargo());
+        professoresFound.setNome(professor.nome() != null ? professor.nome() : professoresFound.getNome());
+        professoresFound.setDataNascimento(professor.dataNascimento() != null ? professor.dataNascimento() : professoresFound.getDataNascimento());
+        professoresFound.setSalario(professor.salario() != null ? professor.salario() : professoresFound.getSalario());
+        professoresFound.setCargo(professor.cargo() != null ? professor.cargo() : professoresFound.getCargo());
 
-        return professorRepository.save(professorFound);
+        return professorRepository.save(professoresFound);
     }
 
     ///DELETE
@@ -57,18 +57,18 @@ public class ProfessorService {
         return "Profissional deletado com sucesso";
     }
 
-    private List<ProfessorConsultaDTO> VerProfessorAtualizado(List<Professor> professoresEntidade) {
+    private List<ProfessorConsultaDTO> VerProfessorAtualizado(List<Professores> professoresEntidade) {
         List<ProfessorConsultaDTO> professoresDTO = new ArrayList<ProfessorConsultaDTO>();
 
-        for (Professor professor: professoresEntidade) {
+        for (Professores professores : professoresEntidade) {
             ProfessorConsultaDTO professorNovo = new ProfessorConsultaDTO(
-                    professor.getId(),
-                    professor.getNome(),
-                    professor.getDataNascimento(),
-                    professor.getSalario(),
-                    professor.getCargo(),
-                    VerTurmasAtualizado(professor.getTurmasList()),
-                    VerDisciplinasAtualizada(professor.getDisciplinasList())
+                    professores.getId(),
+                    professores.getNome(),
+                    professores.getDataNascimento(),
+                    professores.getSalario(),
+                    professores.getCargo(),
+                    VerTurmasAtualizado(professores.getTurmasList()),
+                    VerDisciplinasAtualizada(professores.getDisciplinasList())
             );
 
             professoresDTO.add(professorNovo);

@@ -19,7 +19,7 @@ public class TurmaController {
     TurmasService turmasService;
 
     @PostMapping
-    public ResponseEntity<String> novaTurma (@RequestBody TurmasDTO turma) {
+    public ResponseEntity<Turmas> novaTurma (@RequestBody TurmasDTO turma) {
         return ResponseEntity.status(HttpStatus.CREATED).body(turmasService.save(turma));
     }
 

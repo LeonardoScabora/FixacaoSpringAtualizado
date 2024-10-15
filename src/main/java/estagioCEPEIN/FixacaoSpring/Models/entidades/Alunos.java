@@ -5,16 +5,18 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "Aluno")
-public class Aluno {
+public class Alunos {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,17 +32,26 @@ public class Aluno {
     @Column(name = "DATAREGISTRO")
     private LocalDateTime dataRegistro;
 
-    @OneToOne(mappedBy = "alunoEndereco", cascade = CascadeType.ALL)
-    @JoinColumn(name = "Endereco_id")
-    private Endereco enderecoAluno;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_ID", referencedColumnName = "ID_endereco")
+    private Enderecos endereco;
 
-    public Aluno() {}
+    @ManyToMany(mappedBy = "Turma")
+    private List<Turmas> turmas = new ArrayList<>();
 
-    public Aluno(AlunoDTO alunoNovo) {
-        this.nome = alunoNovo.nome();
-        this.dataNascimento = alunoNovo.dataNascimento();
+//    @OneToMany(mappedBy = "Alunos", cascade = CascadeType.ALL)
+//    private Set<AlunoTurma> alunoTurmaSet = new HashSet<>();
+
+    public Alunos() {}
+
+    public Alunos(AlunoDTO alunodto) {
+        this.nome = alunodto.nome();
+        this.dataNascimento = alunodto.dataNascimento();
         this.dataRegistro = LocalDateTime.now();
-        this.enderecoAluno = alunoNovo.enderecoAluno();
+        this.endereco = alunodto.endereco();
     }
+
+
+
 
 }

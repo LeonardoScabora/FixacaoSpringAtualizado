@@ -28,9 +28,8 @@ public class TurmasService {
     }
 
     @Transactional
-    public String save(TurmasDTO turma) {
-        turmaRepository.save(new Turmas(turma));
-        return "Turma adicionada com Sucesso!";}
+    public Turmas save(TurmasDTO turma) {
+        return turmaRepository.save(new Turmas(turma));}
 
     @Transactional
     public Turmas update(Long id, TurmasDTO turma) {

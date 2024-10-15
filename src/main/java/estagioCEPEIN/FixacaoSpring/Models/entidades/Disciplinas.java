@@ -20,13 +20,13 @@ public class Disciplinas {
 
     @ManyToOne
     @JoinColumn(name = "ID_turma", nullable = false)
-    private Professor professorId; ///Relação Adicionada
+    private Professores professorId; ///Relação Adicionada
 
     public Disciplinas() {}
 
     public Disciplinas(DisciplinasDTO disciplinasDTO){
         this.nome = disciplinasDTO.nome();
-        this.professorId = disciplinasDTO.professorId();
+        this.professorId = disciplinasDTO.professoresId();
     }
 
 }

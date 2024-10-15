@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,14 +26,17 @@ public class Turmas {
 
     @ManyToOne
     @JoinColumn(name="ID_prof", nullable = false)
-    private Professor profId;
+    private Professores profId;
 
-//    @ManyToMany
-//    @JoinTable(name = "Aluno_Turmas",
-//            joinColumns = @JoinColumn(name = "turmas_fk"),
-//            inverseJoinColumns = @JoinColumn(name = "aluno_fk")
-//    )
-//    List<Aluno> alunoList = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "Aluno_Turma",
+            joinColumns = @JoinColumn(name = "ID_turma"),
+            inverseJoinColumns = @JoinColumn(name = "ID_aluno"))
+    private List<Alunos> alunos = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "Turmas", cascade = CascadeType.ALL)
+//    private Set<AlunoTurma> alunoTurmasSet = new HashSet<>();
 
 
     public Turmas() {}

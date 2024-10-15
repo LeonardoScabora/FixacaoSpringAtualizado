@@ -1,7 +1,7 @@
 package estagioCEPEIN.FixacaoSpring.Models.dto;
 
 
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Professor;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Professores;
 
-public record TurmasDTO(String serie, Professor profId) {
+public record TurmasDTO(String serie, Professores profId) {
 }
