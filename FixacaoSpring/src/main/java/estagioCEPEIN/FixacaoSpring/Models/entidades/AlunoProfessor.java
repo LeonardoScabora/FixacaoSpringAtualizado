@@ -1,6 +1,5 @@
 package estagioCEPEIN.FixacaoSpring.Models.entidades;
 
-import estagioCEPEIN.FixacaoSpring.Models.dto.AlunoProfessorDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

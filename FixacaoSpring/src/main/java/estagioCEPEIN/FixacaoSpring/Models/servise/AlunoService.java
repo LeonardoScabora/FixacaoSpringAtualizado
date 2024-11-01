@@ -1,24 +1,17 @@
 package estagioCEPEIN.FixacaoSpring.Models.servise;
 
-import estagioCEPEIN.FixacaoSpring.Models.dto.AlunoConsultaDTO;
-import estagioCEPEIN.FixacaoSpring.Models.dto.AlunoDTO;
-import estagioCEPEIN.FixacaoSpring.Models.dto.ProfessorConsultaAluno;
-import estagioCEPEIN.FixacaoSpring.Models.dto.ProfessorConsultaDTO;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Alunos;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Professores;
-import estagioCEPEIN.FixacaoSpring.Models.enumered.TipoDeMoradiaEnum;
+import estagioCEPEIN.FixacaoSpring.Models.dto.aluno.AlunoConsultaDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.aluno.AlunoDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.aluno.ProfessorConsultaAluno;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Aluno;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Professor;
+import estagioCEPEIN.FixacaoSpring.Models.exceptions.DataNotFoundException;
 import estagioCEPEIN.FixacaoSpring.Models.repositorio.AlunoRepository;
-import estagioCEPEIN.FixacaoSpring.Models.repositorio.ProfessorRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -29,73 +22,95 @@ public class AlunoService {
     @Autowired
     EnderecoService enderecoServise;
 
-
-
-    public Alunos findById(Long id) {
-        return alunoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ID não Encontrado"));
+    ///findBy
+    public AlunoConsultaDTO findById(Long id) {
+        if (alunoRepository.existsById(id)) {
+           AlunoConsultaDTO alunos = VerAlunosAtualizado(alunoRepository.findById(id).get());
+            return alunos;
+        }
+        throw new DataNotFoundException("Aluno");
     }
-
-    public List<Alunos> buscarPorSobrenome(List<String> sobrenome){
-        return alunoRepository.findBySobrenomeIn(sobrenome);
+    ///findByIn
+    public List<Aluno> buscarPorSobrenome(List<String> sobrenome){
+             return alunoRepository.findBySobrenomeIn(sobrenome);
     }
-
-
-    public Iterable<Alunos> findFirtBy() {
-        Iterable<Alunos> aluno = alunoRepository.findFirstBy();
+    ///findFirstBy
+    public List<AlunoConsultaDTO>  findFirtBy() {
+        List<AlunoConsultaDTO>  aluno = alunoRepository.findFirstBy();
         return aluno;
     }
-
-    public Iterable<Alunos> findByIdAndNome(Long id, String nome) {
-        Iterable<Alunos> aluno = alunoRepository.findByIdAndNomeContainingIgnoreCase(id, nome);
+    ///findByAnd
+    public List<AlunoConsultaDTO> findByIdAndNome(Long id, String nome) {
+        List<AlunoConsultaDTO> aluno = VerAlunos(alunoRepository.findByIdAndNomeContainingIgnoreCase(id, nome));
         return aluno;
     }
-
-    public Iterable<Alunos> findByNomeOrSobrenome(String nome, String sobrenome){
-        Iterable<Alunos> aluno = alunoRepository.findByNomeContainingIgnoreCaseOrSobrenomeContainingIgnoreCase(nome, sobrenome);
+    ///findByOr
+    public List<AlunoConsultaDTO> findByNomeOrSobrenome(String nome, String sobrenome){
+        List<AlunoConsultaDTO> aluno = VerAlunos(alunoRepository.findByNomeContainingIgnoreCaseOrSobrenomeContainingIgnoreCase(nome, sobrenome));
         return aluno;
     }
-
-
     ///POST
     @Transactional
-    public Alunos save(AlunoDTO aluno) {
+    public Aluno save(AlunoDTO aluno){
         enderecoServise.save(aluno.endereco());
-
-        Alunos alunoNovo = new Alunos(aluno);
-
-        return alunoRepository.save(alunoNovo);
+        return alunoRepository.save(new Aluno(aluno));
     }
 
-
+    ///GET
     public List<AlunoConsultaDTO> getAll() {
         List<AlunoConsultaDTO> alunos = VerAlunos(alunoRepository.findAll());
+
         return alunos;
     }
 
     ///PUT
     @Transactional
-    public Alunos update(Long id, AlunoDTO alunoNovo) {
-        Alunos alunosFound = findById(id);
+    public Aluno update(Long id, AlunoDTO alunoNovo) {
+            if (alunoRepository.existsById(id)) {
+                List<Aluno> alunoFound = alunoRepository.findAll();
+                for(Aluno aluno : alunoFound){
+                    if(aluno.getId().equals(id)){
 
-        alunosFound.setNome(alunoNovo.nome() != null ? alunoNovo.nome() : alunosFound.getNome());
-        alunosFound.setSobrenome(alunoNovo.sobrenome() != null ? alunoNovo.sobrenome() : alunosFound.getSobrenome());
-        alunosFound.setDataNascimento(alunoNovo.dataNascimento() != null ?alunoNovo.dataNascimento() : alunosFound.getDataNascimento());
-        return alunoRepository.save(alunosFound);
+                        aluno.setNome(alunoNovo.nome() != null ? alunoNovo.nome() : aluno.getNome());
+                        aluno.setSobrenome(alunoNovo.sobrenome() != null ? alunoNovo.sobrenome() : aluno.getSobrenome());
+                        aluno.setDataNascimento(alunoNovo.dataNascimento() != null ? alunoNovo.dataNascimento() : aluno.getDataNascimento());
+
+                        return alunoRepository.save(aluno);
+                    }
+                }
+            }
+            throw new DataNotFoundException("Aluno");
     }
-
     ///DELETE
     @Transactional
     public String delete(Long id) {
-        alunoRepository.delete(findById(id));
-        return "Aluno removido com sucesso!";
+        if(alunoRepository.existsById(id)){
+            alunoRepository.deleteById(id);
+            return "Aluno removido com sucesso!";
+        }
+        throw new DataNotFoundException("Aluno");
     }
 
+    private AlunoConsultaDTO VerAlunosAtualizado (Aluno aluno){
+            AlunoConsultaDTO alunoConsultaDTO = new AlunoConsultaDTO(
+                    aluno.getId(),
+                    aluno.getNome(),
+                    aluno.getSobrenome(),
+                    aluno.getDataNascimento(),
+                    aluno.getDataRegistro(),
+                    aluno.getEndereco(),
+                    VerProfessor(aluno.getProfessores())
+            );
+            if(alunoConsultaDTO != null){
+                return alunoConsultaDTO;
+            }
+            throw new DataNotFoundException("Aluno");
+    }
 
-    ///FAZEER UM GET ESPECIFICO DO ALUNO
-    private List<AlunoConsultaDTO> VerAlunos (List<Alunos> aluno){
+    private List<AlunoConsultaDTO> VerAlunos (List<Aluno> aluno){
         List<AlunoConsultaDTO> alunosDTOs = new ArrayList<AlunoConsultaDTO>();
 
-        for(Alunos alunoBusca : aluno){
+        for(Aluno alunoBusca : aluno){
             AlunoConsultaDTO alunoConsultaDTO = new AlunoConsultaDTO(
                     alunoBusca.getId(),
                     alunoBusca.getNome(),
@@ -107,20 +122,25 @@ public class AlunoService {
             );
             alunosDTOs.add(alunoConsultaDTO);
         }
+
+        if(alunosDTOs.isEmpty()){
+            throw new DataNotFoundException("Aluno");
+        }else{
+        }
             return alunosDTOs;
     }
 
-    private List<ProfessorConsultaAluno> VerProfessor(List<Professores> professoresEntidade) {
+    private List<ProfessorConsultaAluno> VerProfessor(List<Professor> professorEntidade) {
         List<ProfessorConsultaAluno> professoresDTO = new ArrayList<ProfessorConsultaAluno>();
 
-        for (Professores professores : professoresEntidade) {
+        for (Professor professor : professorEntidade) {
             ProfessorConsultaAluno professorNovo = new ProfessorConsultaAluno(
-                    professores.getId(),
-                    professores.getNome(),
-                    professores.getSobrenome(),
-                    professores.getDataNascimento(),
-                    professores.getSalario(),
-                    professores.getCargo()
+                    professor.getId(),
+                    professor.getNome(),
+                    professor.getSobrenome(),
+                    professor.getDataNascimento(),
+                    professor.getSalario(),
+                    professor.getCargo()
             );
 
             professoresDTO.add(professorNovo);

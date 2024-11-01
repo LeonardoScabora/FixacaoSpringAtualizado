@@ -1,7 +1,8 @@
 package estagioCEPEIN.FixacaoSpring.Models.servise;
 
-import estagioCEPEIN.FixacaoSpring.Models.dto.EnderecoDTO;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Enderecos;
+import estagioCEPEIN.FixacaoSpring.Models.dto.endereco.EnderecoDTO;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Endereco;
+import estagioCEPEIN.FixacaoSpring.Models.exceptions.DataNotFoundException;
 import estagioCEPEIN.FixacaoSpring.Models.repositorio.EnderecoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -17,28 +18,29 @@ public class EnderecoService {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
-    public Enderecos getById(Long id){
-        return enderecoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ID não Encontrado"));
+    public Endereco getById(Long id){
+        if(enderecoRepository.existsById(id)){
+            return enderecoRepository.findById(id).get();
+        }
+        throw new DataNotFoundException("Endereço");
     }
 
-    public List<Enderecos> getAll(){
+    public List<Endereco> getAll(){
         return enderecoRepository.findAll();
     }
 
     @Transactional
-    public Enderecos save(Enderecos endereco){
-        endereco.setDataRegistro(LocalDateTime.now());
+    public Endereco save(Endereco endereco){
         return enderecoRepository.save(endereco);
     }
 
     @Transactional
-    public Enderecos update(Long id, EnderecoDTO endereco){
-        Enderecos enderecoAtual = getById(id);
+    public Endereco update(Long id, EnderecoDTO endereco){
+            Endereco enderecoAtual = getById(id);
 
-        enderecoAtual.setRua(endereco.rua() != null ?  endereco.rua() : enderecoAtual.getRua());
-        enderecoAtual.setBairro(endereco.bairro() != null ? endereco.bairro() : enderecoAtual.getBairro());
-        enderecoAtual.setMoradia(endereco.moradia() != null ? endereco.moradia() : enderecoAtual.getMoradia());
-
-        return enderecoRepository.save(enderecoAtual);
+            enderecoAtual.setRua(endereco.rua() != null ?  endereco.rua() : enderecoAtual.getRua());
+            enderecoAtual.setBairro(endereco.bairro() != null ? endereco.bairro() : enderecoAtual.getBairro());
+            enderecoAtual.setMoradia(endereco.moradia() != null ? endereco.moradia() : enderecoAtual.getMoradia());
+            return enderecoRepository.save(enderecoAtual);
     }
 }

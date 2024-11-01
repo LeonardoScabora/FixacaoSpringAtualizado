@@ -1,10 +1,10 @@
 package estagioCEPEIN.FixacaoSpring.Models.servise;
 
-import estagioCEPEIN.FixacaoSpring.Models.dto.TurmasConsultaDTO;
-import estagioCEPEIN.FixacaoSpring.Models.dto.TurmasDTO;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Turmas;
+import estagioCEPEIN.FixacaoSpring.Models.dto.turma.TurmasConsultaDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.turma.TurmasDTO;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Turma;
+import estagioCEPEIN.FixacaoSpring.Models.exceptions.DataNotFoundException;
 import estagioCEPEIN.FixacaoSpring.Models.repositorio.TurmaRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,42 +18,62 @@ public class TurmasService {
     @Autowired
     TurmaRepository turmaRepository;
 
-    public Turmas getById(Long id){
-        return turmaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ID não Encontrado"));
+    public Turma getById(Long id){
+        if(turmaRepository.existsById(id)){
+            return turmaRepository.findById(id).get();
+        }
+        throw new DataNotFoundException("Turma");
     }
 
     public List<TurmasConsultaDTO> getAll(){
-        List<TurmasConsultaDTO> turmas = preencherTurmasDTO(turmaRepository.findAll());
+        List<TurmasConsultaDTO> turmas = VerTurmas(turmaRepository.findAll());
         return turmas;
     }
 
     @Transactional
-    public Turmas save(TurmasDTO turma) {
-        return turmaRepository.save(new Turmas(turma));}
+    public TurmasConsultaDTO save(TurmasDTO turma) {
+        return VerTurma(turmaRepository.save(new Turma(turma)));}
 
     @Transactional
-    public Turmas update(Long id, TurmasDTO turma) {
-        Turmas turmaFound = getById(id);
+    public TurmasConsultaDTO update(Long id, TurmasDTO turma) {
+        Turma turmaFound = getById(id);
 
         turmaFound.setSerie(turma.serie() != null ? turma.serie() : turmaFound.getSerie());
 
-        return turmaRepository.save(turmaFound);
+        return VerTurma(turmaRepository.save(turmaFound));
     }
 
     @Transactional
     public String delete(Long id) {
-        turmaRepository.deleteById(id);
-        return "Turma removida com sucesso!";
+        if(turmaRepository.existsById(id)){
+            turmaRepository.deleteById(id);
+            return "Turma removida com sucesso!";
+        }else{
+            throw new DataNotFoundException("Turma");
+        }
     }
 
-    public List<Turmas> buscarTurmasPorSerie(List<String> serie) {
+    ///findByIn
+    public List<Turma> buscarTurmasPorSerie(List<String> serie) {
         return turmaRepository.findBySerieIn(serie);
     }
 
-    private List<TurmasConsultaDTO> preencherTurmasDTO(List<Turmas> TurmasEntidades) {
+    private TurmasConsultaDTO VerTurma(Turma turmaEntidade) {
+            TurmasConsultaDTO turmaNova = new TurmasConsultaDTO(
+                    turmaEntidade.getId(),
+                    turmaEntidade.getSerie(),
+                    turmaEntidade.getDataRegistro()
+            );
+            if(turmaNova != null){
+                return turmaNova;
+            }
+            throw new DataNotFoundException("Turma");
+    }
+
+    private List<TurmasConsultaDTO> VerTurmas(List<Turma> turmaEntidades) {
         List<TurmasConsultaDTO> turmaDTO = new ArrayList<TurmasConsultaDTO>();
 
-        for(Turmas turma: TurmasEntidades) {
+        for(Turma turma: turmaEntidades) {
             TurmasConsultaDTO turmaNova = new TurmasConsultaDTO(
                     turma.getId(),
                     turma.getSerie(),

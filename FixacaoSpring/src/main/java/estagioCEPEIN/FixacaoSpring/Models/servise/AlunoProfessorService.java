@@ -1,9 +1,10 @@
 package estagioCEPEIN.FixacaoSpring.Models.servise;
 
-import estagioCEPEIN.FixacaoSpring.Models.dto.AlunoConsultaDTO;
-import estagioCEPEIN.FixacaoSpring.Models.dto.AlunoProfessorDTO;
-import estagioCEPEIN.FixacaoSpring.Models.dto.ProfessorConsultaDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.aluno.AlunoConsultaDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.alunoProfessor.AlunoProfessorDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.professor.ProfessorConsultaDTO;
 import estagioCEPEIN.FixacaoSpring.Models.entidades.AlunoProfessor;
+import estagioCEPEIN.FixacaoSpring.Models.exceptions.DataNotFoundException;
 import estagioCEPEIN.FixacaoSpring.Models.repositorio.AlunoProfessorRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,11 @@ public class AlunoProfessorService {
     @Autowired
     AlunoService alunoService;
 
-
     public AlunoProfessor getById(Long id){
-        return alunoProfessorRepository.getById(id);
+        if(alunoProfessorRepository.existsById(id)){
+          return alunoProfessorRepository.findById(id).get();
+        }
+        throw new DataNotFoundException("Relacionamento");
     }
 
     public List<AlunoProfessor> getAll() {
@@ -38,8 +41,8 @@ public class AlunoProfessorService {
         Long valorAluno = null;
         Long valorProfessor = null;
 
-        List<ProfessorConsultaDTO> profBusca = professorService.getAll();
         List<AlunoConsultaDTO> alunoBusca = alunoService.getAll();
+        List<ProfessorConsultaDTO> profBusca = professorService.getAll();
 
         for(AlunoConsultaDTO buscar : alunoBusca) {
             if(Novo.getIdAluno() == buscar.id()) {
@@ -51,29 +54,24 @@ public class AlunoProfessorService {
                     valorProfessor = buscar.id();
                 }
             }
-        AlunoProfessor alunoProfessor = new AlunoProfessor(
-                 null,
-                valorAluno,
-                valorProfessor
-        );
-        return alunoProfessorRepository.save(alunoProfessor);
+        return alunoProfessorRepository.save(new AlunoProfessor(null, valorAluno, valorProfessor));
     }
 
     @Transactional
     public AlunoProfessor update(Long id, AlunoProfessorDTO AlunoProf) {
-        AlunoProfessor AcharAlunoProf = getById(id);
+            AlunoProfessor AcharAlunoProf = getById(id);
 
-        AcharAlunoProf.setIdAluno(AlunoProf.idAluno() != null ? AlunoProf.idAluno() : AcharAlunoProf.getIdAluno());
-        AcharAlunoProf.setIdProf(AlunoProf.idProf() != null ? AlunoProf.idProf() : AcharAlunoProf.getIdProf());
-
-        return alunoProfessorRepository.save(AcharAlunoProf);
+            AcharAlunoProf.setIdAluno(AlunoProf.idAluno() != null ? AlunoProf.idAluno() : AcharAlunoProf.getIdAluno());
+            AcharAlunoProf.setIdProf(AlunoProf.idProf() != null ? AlunoProf.idProf() : AcharAlunoProf.getIdProf());
+            return alunoProfessorRepository.save(AcharAlunoProf);
     }
 
     @Transactional
     public String delete(Long id){
-        alunoProfessorRepository.deleteById(id);
-        return "Relacionamento Excluido com Sucesso";
+        if(alunoProfessorRepository.existsById(id)){
+            alunoProfessorRepository.deleteById(id);
+            return "Relacionamento Excluido com Sucesso";
+        }
+        throw new DataNotFoundException("Relacionamento");
     }
-
-
 }

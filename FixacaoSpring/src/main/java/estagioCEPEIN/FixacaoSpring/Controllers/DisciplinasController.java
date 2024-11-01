@@ -1,9 +1,8 @@
 package estagioCEPEIN.FixacaoSpring.Controllers;
 
-import estagioCEPEIN.FixacaoSpring.Models.dto.DisciplinasConsultaDTO;
-import estagioCEPEIN.FixacaoSpring.Models.dto.DisciplinasDTO;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Disciplinas;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.DisciplinasID;
+import estagioCEPEIN.FixacaoSpring.Models.dto.disciplina.DisciplinasConsultaDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.disciplina.DisciplinasDTO;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Disciplina;
 import estagioCEPEIN.FixacaoSpring.Models.servise.DisciplinaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,7 @@ public class DisciplinasController {
     DisciplinaService disciplinaService;
 
     @PostMapping
-    public ResponseEntity<Disciplinas> novaDisciplina(@RequestBody DisciplinasDTO disciplina) {
+    public ResponseEntity<DisciplinasConsultaDTO> novaDisciplina(@RequestBody DisciplinasDTO disciplina) {
         return ResponseEntity.status(HttpStatus.CREATED).body(disciplinaService.save(disciplina));
     }
 
@@ -30,13 +29,17 @@ public class DisciplinasController {
     }
 
     @PutMapping(path = "/id/{id}")
-    public ResponseEntity<Disciplinas> editDisciplina(@PathVariable Long id, @RequestBody DisciplinasDTO disciplina) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(disciplinaService.update(id, disciplina));
+    public ResponseEntity<Disciplina> editDisciplina(@PathVariable Long id, @RequestBody DisciplinasDTO disciplina) {
+        return ResponseEntity.status(HttpStatus.OK).body(disciplinaService.update(id, disciplina));
     }
 
     @DeleteMapping(path = "/id/{id}")
     public String deletarDisciplina(@PathVariable Long id){
-        return disciplinaService.delete(id);
+        return disciplinaService.deleteId(id);
     }
 
+    @GetMapping(path = "/id/{id}")
+    public DisciplinasConsultaDTO buscarPorId(@PathVariable Long id){
+        return disciplinaService.getById(id);
+    }
 }

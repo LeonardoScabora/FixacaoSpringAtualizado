@@ -1,8 +1,8 @@
 package estagioCEPEIN.FixacaoSpring.Controllers;
 
-import estagioCEPEIN.FixacaoSpring.Models.dto.TurmasConsultaDTO;
-import estagioCEPEIN.FixacaoSpring.Models.dto.TurmasDTO;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Turmas;
+import estagioCEPEIN.FixacaoSpring.Models.dto.turma.TurmasConsultaDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.turma.TurmasDTO;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Turma;
 import estagioCEPEIN.FixacaoSpring.Models.servise.TurmasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class TurmaController {
     TurmasService turmasService;
 
     @PostMapping
-    public ResponseEntity<Turmas> novaTurma (@RequestBody TurmasDTO turma) {
+    public ResponseEntity<TurmasConsultaDTO> novaTurma (@RequestBody TurmasDTO turma) {
         return ResponseEntity.status(HttpStatus.CREATED).body(turmasService.save(turma));
     }
 
@@ -29,17 +29,17 @@ public class TurmaController {
     }
 
     @PutMapping
-    public ResponseEntity<Turmas> alterarTurmas (@PathVariable Long id, @RequestBody TurmasDTO turma) {
+    public ResponseEntity<TurmasConsultaDTO> alterarTurmas (@PathVariable Long id, @RequestBody TurmasDTO turma) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(turmasService.update(id, turma));
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "/id/{id}")
     public String removerTurmas (@PathVariable Long id) {
         return turmasService.delete(id);
     }
 
-    @GetMapping(path = "/procurar/")
-    public List<Turmas> BuscaPorSerie (@RequestParam List<String> serie) {
+    @GetMapping(path = "/procurar")
+    public List<Turma> BuscaPorSerie (@RequestParam List<String> serie) {
         return turmasService.buscarTurmasPorSerie(serie);
     }
 

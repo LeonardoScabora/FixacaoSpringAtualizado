@@ -1,10 +1,9 @@
 package estagioCEPEIN.FixacaoSpring.Controllers;
 
-import estagioCEPEIN.FixacaoSpring.Models.dto.ProfessorConsultaDTO;
-import estagioCEPEIN.FixacaoSpring.Models.dto.ProfessorDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.professor.ProfessorConsultaDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.professor.ProfessorDTO;
 import estagioCEPEIN.FixacaoSpring.Models.enumered.TipoCargoEnum;
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Professores;
-import estagioCEPEIN.FixacaoSpring.Models.repositorio.ProfessorRepository;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Professor;
 import estagioCEPEIN.FixacaoSpring.Models.servise.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,7 @@ public class ProfessorController {
     private ProfessorService professorService;
 
     @PostMapping
-    public ResponseEntity<Professores> novoProfessor (@RequestBody ProfessorDTO professor) {
+    public ResponseEntity<Professor> novoProfessor (@RequestBody ProfessorDTO professor) {
         return ResponseEntity.status(HttpStatus.CREATED).body(professorService.save(professor));
     }
 
@@ -31,56 +30,67 @@ public class ProfessorController {
         return ResponseEntity.status(HttpStatus.OK).body(professorService.getAll());
     }
 
-    @PutMapping
-    public ResponseEntity<Professores> AlterarProfessor (@PathVariable Long id, @RequestBody ProfessorDTO professornovo) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(professorService.update(id, professornovo));
+    @PutMapping(path = "/id/{id}")
+    public ResponseEntity<ProfessorConsultaDTO> AlterarProfessor (@PathVariable Long id, @RequestBody ProfessorDTO professornovo) {
+        return ResponseEntity.status(HttpStatus.OK).body(professorService.update(id, professornovo));
     }
 
     @DeleteMapping(path = "/{id}")
     public String ExcluirProfessorPorID (@PathVariable Long id) {
         return professorService.delete(id);}
 
-    ///JPA QUERY
+    //JPA QUERY
     ///findBy
     @GetMapping(path = "/id/{id}")
-    public Professores procurarProfessorID(@PathVariable Long id) {return professorService.findById(id);}
-
-
+    public ProfessorConsultaDTO procurarProfessorID(@PathVariable Long id) {return professorService.findById(id);
+    }
     ///findFirstBy
     @GetMapping(path = "/primeiro")
-    public Iterable<Professores> procuraPrimeiro() {return professorService.findFirstBy();}
-
+    public List<ProfessorConsultaDTO> procuraPrimeiro() {return professorService.findFirstBy();
+    }
     ///findByAnd
-    @GetMapping(path = "/NomeECargo/{nome}/{cargo}")
-    public Iterable<Professores> procuraPorNomeECargo (@PathVariable String nome, @PathVariable TipoCargoEnum cargo) {
+    @GetMapping(path = "/NomeECargo")
+    public List<ProfessorConsultaDTO> procuraPorNomeECargo (@RequestParam String nome, @RequestParam TipoCargoEnum cargo) {
         return professorService.findNomeECargo(nome,cargo);
     }
-
     ///findByOr
     @GetMapping(path = "/NomeOuSobrenome")
-    public Iterable<Professores> procuraPorNomeOuSobrenome(@RequestParam String nome, @RequestParam String sobrenome) {
+    public List<ProfessorConsultaDTO> procuraPorNomeOuSobrenome(@RequestParam String nome, @RequestParam String sobrenome) {
         return professorService.findByNomeOuSobrenome(nome, sobrenome);
     }
-
     ///findByOrderByDesc
-    @GetMapping(path = "/MaiorSalario")
-    public List<Professores> buscarPorMaiorSalario(BigDecimal salario){
+    @GetMapping(path = "/AcimaDe")
+    public List<ProfessorConsultaDTO> buscarPorMaiorSalario(@RequestParam BigDecimal salario){
         return professorService.findMaiorSalario(salario);
     }
-
-//    ///findByBetween
-//    @GetMapping(path = "/FaixaSalario")
-//    public List<Professores> buscarPorFaixaSalarial(@RequestParam BigDecimal salarioMin, @RequestParam BigDecimal salarioMax){
-//        return professorService.findFaixaSalario(salarioMin,salarioMax);
-//    }
-//
-//    ///findByOrderBy
-//    @GetMapping(path = "/SalarioCrescente")
-//    public List<Professores> SalarioEmOrdemCrescente(){
-//        return professorService.findSalarioCrescente();
-//    }
+    ///findByBetween
+    @GetMapping(path = "/Entre")
+    public List<ProfessorConsultaDTO> buscarPorFaixaSalarial(@RequestParam BigDecimal salarioMin, @RequestParam BigDecimal salarioMax){
+        return professorService.findFaixaSalario(salarioMin,salarioMax);
+    }
+    ///findByOrderBy
+    @GetMapping(path = "/SalarioCrescente")
+    public List<ProfessorConsultaDTO> SalarioEmOrdemCrescente(){
+        return professorService.findSalarioCrescente();
+    }
     ///findByLessThan
+    @GetMapping(path = "/SalarioMenorQ")
+    public List<ProfessorConsultaDTO> SalarioMenorQue(@RequestParam BigDecimal salarioMax){
+        return professorService.findSalarioMenorQue(salarioMax);
+    }
     ///findByLessThanEqual
+    @GetMapping(path = "/SalarioMenorIgual")
+    public List<ProfessorConsultaDTO> SalarioMenorIgual(@RequestParam BigDecimal salarioMax){
+        return professorService.findSalarioMenorOuIgual(salarioMax);
+    }
     ///findByGreaterThan
+    @GetMapping(path = "/SalarioMaiorQ")
+    public List<ProfessorConsultaDTO> SalarioMaiorQue(@RequestParam BigDecimal salarioMin){
+        return professorService.findSalarioMaiorQue(salarioMin);
+    }
     ///findByGreaterThanEqual
+    @GetMapping(path = "/SalarioMaiorIgual")
+    public List<ProfessorConsultaDTO> SalarioMaiorIgual(@RequestParam BigDecimal salarioMin){
+        return professorService.findSalarioMaiorOuIgual(salarioMin);
+    }
 }

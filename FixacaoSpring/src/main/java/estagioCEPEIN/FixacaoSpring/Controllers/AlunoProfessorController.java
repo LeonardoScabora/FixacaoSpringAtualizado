@@ -1,6 +1,6 @@
 package estagioCEPEIN.FixacaoSpring.Controllers;
 
-import estagioCEPEIN.FixacaoSpring.Models.dto.AlunoProfessorDTO;
+import estagioCEPEIN.FixacaoSpring.Models.dto.alunoProfessor.AlunoProfessorDTO;
 import estagioCEPEIN.FixacaoSpring.Models.entidades.AlunoProfessor;
 import estagioCEPEIN.FixacaoSpring.Models.servise.AlunoProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,32 +13,31 @@ import java.util.List;
 public class AlunoProfessorController {
 
     @Autowired
-    AlunoProfessorService alunoProfessorservice;
+    AlunoProfessorService alunoProfessorService;
 
     @GetMapping
     public List<AlunoProfessor> VerAlunoProfessor() {
-        return alunoProfessorservice.getAll();
+        return alunoProfessorService.getAll();
     }
 
     @PostMapping
     public AlunoProfessor JuntarAlunoProfessor(@RequestBody AlunoProfessor alunoProfessor) {
-        return alunoProfessorservice.save(alunoProfessor);
+        return alunoProfessorService.save(alunoProfessor);
     }
 
-    @PutMapping(path = "/{id}")
+    @PutMapping(path = "/id/{id}")
     public AlunoProfessor AtualizarAlunoProfessor(@PathVariable Long id, @RequestBody AlunoProfessorDTO AlunoProf){
-        return alunoProfessorservice.update(id, AlunoProf);
+        return alunoProfessorService.update(id, AlunoProf);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "/id/{id}")
     public String DeletarAlunoProfessor(@PathVariable Long id){
-        return alunoProfessorservice.delete(id);
+        return alunoProfessorService.delete(id);
     }
-
 
     @GetMapping(path = "id/{id}")
     public AlunoProfessor buscarPorId(@PathVariable Long id){
-        return alunoProfessorservice.getById(id);
+        return alunoProfessorService.getById(id);
     }
 
 
