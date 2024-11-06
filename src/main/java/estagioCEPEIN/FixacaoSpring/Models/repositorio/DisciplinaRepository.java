@@ -1,7 +1,8 @@
 package estagioCEPEIN.FixacaoSpring.Models.repositorio;
 
-import estagioCEPEIN.FixacaoSpring.Models.entidades.Disciplinas;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.Disciplina;
+import estagioCEPEIN.FixacaoSpring.Models.entidades.DisciplinaID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DisciplinaRepository extends JpaRepository<Disciplinas, Long> {
+public interface DisciplinaRepository extends JpaRepository<Disciplina, DisciplinaID> {
 }
